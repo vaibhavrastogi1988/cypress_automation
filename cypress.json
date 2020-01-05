@@ -1,6 +1,11 @@
 {
-    "include": [
-      "./node_modules/cypress",
-      "cypress/**/*.js"
-    ]
+    "defaultCommandTimeout": 8000,
+    "pageLoadTimeout": 10000,
+    "chromeWebSecurity": false,
+
+    "env":{
+      "url": "https://www.rahulshettyacademy.com/angularpractice/"
+    },
+
+    "reporter": "mochawesome"
   }
