@@ -8,6 +8,8 @@
 /// <reference types="Cypress" />
 import HomePage from '../../../support/pageObjects/HomePage'
 import ProductPage from '../../../support/pageObjects/ProductPage'
+import CheckOutPage from '../../../support/pageObjects/CheckOutPage'
+import PurchasePage from '../../../support/pageObjects/PurchasePage'
 
 describe('Initial Cypress Framework', function() {
     before(function() {
@@ -20,6 +22,8 @@ describe('Initial Cypress Framework', function() {
         Cypress.config('defaultCommandTimeout', 10000)
         const homePage = new HomePage()
         const productPage = new ProductPage()
+        const checkOutPage = new CheckOutPage()
+        const purchasePage = new PurchasePage()
         cy.visit(Cypress.env('url'))
         
         homePage.getEditBox().type(this.data.name)
@@ -38,7 +42,7 @@ describe('Initial Cypress Framework', function() {
         productPage.checkOutButton().click()
 
         var sum =0
-        cy.get('tr td:nth-child(4) strong').each(($el, index, $list) => {
+        checkOutPage.getEachProductPrice().each(($el, index, $list) => {
             const amount = $el.text()
             var res = amount.split(" ")
             res = res[1].trim()
@@ -49,19 +53,19 @@ describe('Initial Cypress Framework', function() {
             cy.log(sum)
         })
 
-        cy.get('h3 strong').then(function(element){
+        checkOutPage.getTotalPrice().then(function(element){
             const amount = element.text()
             var res = amount.split(" ")
             var total = res[1].trim()
             expect(Number(total)).to.equal(Number(sum))
         })
-        cy.contains('Checkout').click()
-        cy.get('#country').type('India')
-        cy.get('.suggestions > ul > li > a').click()
-        cy.get('#checkbox2').click({force: true})
-        cy.get('input[type="submit"]').click()
+        checkOutPage.checkOutButton().click()
+        purchasePage.setCountry().type('India')
+        purchasePage.selectCountryFromSuggestions().click()
+        purchasePage.termsAndConditons().click({force: true})
+        purchasePage.clickSubmit().click()
         // cy.get('.alert').should('have.value', 'Success! Thank you! Your order will be delivered in next few weeks :-).')
-        cy.get('.alert').then(function(element){
+        purchasePage.validateSuccessAlert().then(function(element){
             const actualText = element.text()
             expect(actualText.includes('Success')).to.be.true
         })
